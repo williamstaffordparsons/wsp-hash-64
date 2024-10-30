@@ -18,7 +18,7 @@ int main(void) {
 
   while (i != 10) {
     i++;
-    printf("All-at-once result %u is %020lu.\n", i,
+    printf("All-at-once result %u is 0x%016lx.\n", i,
            wsp_hash_64(8, (const uint8_t *) input));
     input[7]++;
   }
@@ -32,7 +32,7 @@ int main(void) {
     wsp_hash_64_transform(0, 8, (const uint8_t *) input, &s);
     wsp_hash_64_finalize(&s);
     input[7]++;
-    printf("Segmented result %u is %020lu.\n", i, s.state);
+    printf("Segmented result %u is 0x%016lx.\n", i, s.state);
   }
 
   return 0;
