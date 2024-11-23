@@ -2,7 +2,7 @@
 © 2024 William Stafford Parsons
 
 ## About
-WSP-Hash-64 is a 64-bit hashing algorithm as a reasonable alternative to CityHash64, 128-bit MurmurHash3 x64 and x86, 64-bit SipHash and 64-bit SpookyHashV2.
+WSP-Hash-64 is a 64-bit hashing algorithm as a substantial improvement to CityHash64, FarmHash64, 64-bit MurmurHash3 x64 and x86, 64-bit SpookyHashV2 and XXHash64.
 
 Read more [here](https://williamstaffordparsons.github.io/wsp-hash-64/).
 
@@ -32,7 +32,7 @@ int main(void) {
     wsp_hash_64_transform(0, 8, (const uint8_t *) input, &s);
     wsp_hash_64_finalize(&s);
     input[7]++;
-    printf("Segmented result %u is 0x%016lx.\n", i, s.state);
+    printf("Segmented result %u is 0x%016lx.\n", i, s.mix);
   }
 
   return 0;

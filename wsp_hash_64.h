@@ -9,8 +9,9 @@ struct wsp_hash_64_s {
   uint64_t b;
   uint64_t c;
   uint64_t d;
-  uint64_t _state;
-  uint64_t state;
+  uint64_t mix;
+  uint64_t mix_offset;
+  unsigned long input_count_capture;
 };
 
 uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input);
