@@ -66,8 +66,9 @@ uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input) {
   if ((input_count - i) >= 8) {
     i += 8;
     input_aligned_capture_a = _wsp_hash_read_64(input, i - 8);
-    mix += input_aligned_capture_a;
-    a += input_aligned_capture_a + ((a << 30) | (a >> 34)) + mix;
+    mix += input_aligned_capture_a + a;
+    a += ((input_aligned_capture_a << 30) | (input_aligned_capture_a >> 34))
+      + mix;
   }
 
   if (i != input_count) {
@@ -176,8 +177,9 @@ void wsp_hash_64_transform(unsigned long i, unsigned long input_count,
   if ((input_count - i) >= 8) {
     i += 8;
     input_aligned_capture_a = _wsp_hash_read_64(input, i - 8);
-    s->mix += input_aligned_capture_a;
-    s->a += input_aligned_capture_a + ((s->a << 30) | (s->a >> 34)) + s->mix;
+    s->mix += input_aligned_capture_a + s->a;
+    s->a += ((input_aligned_capture_a << 30) | (input_aligned_capture_a >> 34))
+      + s->mix;
   }
 
   if (i != input_count) {
