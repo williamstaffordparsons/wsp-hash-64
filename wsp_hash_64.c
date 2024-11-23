@@ -1,5 +1,4 @@
 #include "wsp_hash_64.h"
-#include <stdio.h>
 
 uint32_t _wsp_hash_read_32(const uint8_t *input, unsigned long i) {
   uint32_t input_aligned;
