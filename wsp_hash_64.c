@@ -103,17 +103,16 @@ uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input) {
   }
 
   a += b + mix_offset + input_count_capture;
-  mix += ((a << 16) | (a >> 48)) + ((c << 44) | (c >> 20));
-  mix ^= a;
+  mix = a ^ (mix + ((a << 16) | (a >> 48)) + ((c << 44) | (c >> 20)));
   mix_offset += ((a << 40) | (a >> 24)) ^ ((b << 36) | (b >> 28));
   b ^= mix_offset + input_count_capture;
   mix_offset += a ^ (((b << 36) | (b >> 28)) + ((d << 14) | (d >> 50)) + mix);
-  mix += c + ((d << 22) | (d >> 42));
   a = b + d + mix_offset;
+  c += (d << 22) | (d >> 42);
   mix_offset += ((a << 40) | (a >> 24)) ^ b;
-  mix += ((a << 26) | (a >> 38)) ^ d;
-  mix_offset += a ^ ((mix_offset << 36) | (mix_offset >> 28));
-  return mix + mix_offset;
+  b = a ^ ((mix_offset << 36) | (mix_offset >> 28));
+  d = (((a << 26) | (a >> 38)) ^ d) + c + mix;
+  return b + d + mix_offset;
 }
 
 void wsp_hash_64_initialize(struct wsp_hash_64_s *s) {
@@ -214,17 +213,17 @@ void wsp_hash_64_transform(unsigned long i, unsigned long input_count,
 
 void wsp_hash_64_finalize(struct wsp_hash_64_s *s) {
   s->a += s->b + s->mix_offset + s->input_count_capture;
-  s->mix += ((s->a << 16) | (s->a >> 48)) + ((s->c << 44) | (s->c >> 20));
-  s->mix ^= s->a;
+  s->mix = s->a ^ (s->mix + ((s->a << 16) | (s->a >> 48))
+    + ((s->c << 44) | (s->c >> 20)));
   s->mix_offset += ((s->a << 40) | (s->a >> 24))
     ^ ((s->b << 36) | (s->b >> 28));
   s->b ^= s->mix_offset + s->input_count_capture;
   s->mix_offset += s->a ^ (((s->b << 36) | (s->b >> 28))
     + ((s->d << 14) | (s->d >> 50)) + s->mix);
-  s->mix += s->c + ((s->d << 22) | (s->d >> 42));
   s->a = s->b + s->d + s->mix_offset;
+  s->c += (s->d << 22) | (s->d >> 42);
   s->mix_offset += ((s->a << 40) | (s->a >> 24)) ^ s->b;
-  s->mix += ((s->a << 26) | (s->a >> 38)) ^ s->d;
-  s->mix_offset += s->a ^ ((s->mix_offset << 36) | (s->mix_offset >> 28));
-  s->mix += s->mix_offset;
+  s->b = s->a ^ ((s->mix_offset << 36) | (s->mix_offset >> 28));
+  s->d = (((s->a << 26) | (s->a >> 38)) ^ s->d) + s->c + s->mix;
+  s->mix = s->b + s->d + s->mix_offset;
 }
