@@ -16,10 +16,10 @@ uint64_t _wsp_hash_read_64(const uint8_t *input, unsigned long i) {
 }
 
 uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input) {
-  uint64_t _a;
-  uint64_t _b;
-  uint64_t _c;
-  uint64_t _d;
+  uint64_t input_aligned_capture_a;
+  uint64_t input_aligned_capture_b;
+  uint64_t input_aligned_capture_c;
+  uint64_t input_aligned_capture_d;
   uint64_t a = 1;
   uint64_t b = 11;
   uint64_t c = 111;
@@ -33,15 +33,16 @@ uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input) {
     i = 31;
 
     while (i < input_count) {
-      _a = _wsp_hash_read_64(input, i - 7);
-      _b = _wsp_hash_read_64(input, i - 15);
-      _c = _wsp_hash_read_64(input, i - 23);
-      _d = _wsp_hash_read_64(input, i - 31);
-      mix += _a + _b + _c + _d;
-      a += _a + ((a << 30) | (a >> 34)) + mix;
-      b += _b + ((b << 29) | (b >> 35));
-      c += _c + ((c << 28) | (c >> 36));
-      d += _d + ((d << 27) | (d >> 37));
+      input_aligned_capture_a = _wsp_hash_read_64(input, i - 7);
+      input_aligned_capture_b = _wsp_hash_read_64(input, i - 15);
+      input_aligned_capture_c = _wsp_hash_read_64(input, i - 23);
+      input_aligned_capture_d = _wsp_hash_read_64(input, i - 31);
+      mix += input_aligned_capture_a + input_aligned_capture_b
+        + input_aligned_capture_c + input_aligned_capture_d;
+      a += input_aligned_capture_a + ((a << 30) | (a >> 34)) + mix;
+      b += input_aligned_capture_b + ((b << 29) | (b >> 35));
+      c += input_aligned_capture_c + ((c << 28) | (c >> 36));
+      d += input_aligned_capture_d + ((d << 27) | (d >> 37));
       i += 32;
     }
 
@@ -49,24 +50,25 @@ uint64_t wsp_hash_64(unsigned long input_count, const uint8_t *input) {
       i -= 32;
     }
 
-    mix_offset += _a + _b + _c + _d + a + b + c + d;
+    mix_offset += input_aligned_capture_a + input_aligned_capture_b
+        + input_aligned_capture_c + input_aligned_capture_d + a + b + c + d;
     i++;
   }
 
   if ((input_count - i) >= 16) {
     i += 16;
-    _a = _wsp_hash_read_64(input, i - 16);
-    _b = _wsp_hash_read_64(input, i - 8);
-    mix += _a + _b;
-    a += _a + ((a << 30) | (a >> 34)) + mix;
-    b += _b + ((b << 28) | (b >> 36)) + mix;
+    input_aligned_capture_a = _wsp_hash_read_64(input, i - 16);
+    input_aligned_capture_b = _wsp_hash_read_64(input, i - 8);
+    mix += input_aligned_capture_a + input_aligned_capture_b;
+    a += input_aligned_capture_a + ((a << 30) | (a >> 34)) + mix;
+    b += input_aligned_capture_b + ((b << 28) | (b >> 36)) + mix;
   }
 
   if ((input_count - i) >= 8) {
     i += 8;
-    _a = _wsp_hash_read_64(input, i - 8);
-    mix += _a;
-    a += _a + ((a << 30) | (a >> 34)) + mix;
+    input_aligned_capture_a = _wsp_hash_read_64(input, i - 8);
+    mix += input_aligned_capture_a;
+    a += input_aligned_capture_a + ((a << 30) | (a >> 34)) + mix;
   }
 
   if (i != input_count) {
@@ -129,10 +131,10 @@ void wsp_hash_64_initialize(struct wsp_hash_64_s *s) {
 void wsp_hash_64_transform(unsigned long i, unsigned long input_count,
                            const uint8_t *input,
                            struct wsp_hash_64_s *s) {
-  uint64_t _a;
-  uint64_t _b;
-  uint64_t _c;
-  uint64_t _d;
+  uint64_t input_aligned_capture_a;
+  uint64_t input_aligned_capture_b;
+  uint64_t input_aligned_capture_c;
+  uint64_t input_aligned_capture_d;
 
   s->input_count_capture += input_count;
 
@@ -140,15 +142,16 @@ void wsp_hash_64_transform(unsigned long i, unsigned long input_count,
     i = 31;
 
     while (i < input_count) {
-      _a = _wsp_hash_read_64(input, i - 7);
-      _b = _wsp_hash_read_64(input, i - 15);
-      _c = _wsp_hash_read_64(input, i - 23);
-      _d = _wsp_hash_read_64(input, i - 31);
-      s->mix += _a + _b + _c + _d;
-      s->a += _a + ((s->a << 30) | (s->a >> 34)) + s->mix;
-      s->b += _b + ((s->b << 29) | (s->b >> 35));
-      s->c += _c + ((s->c << 28) | (s->c >> 36));
-      s->d += _d + ((s->d << 27) | (s->d >> 37));
+      input_aligned_capture_a = _wsp_hash_read_64(input, i - 7);
+      input_aligned_capture_b = _wsp_hash_read_64(input, i - 15);
+      input_aligned_capture_c = _wsp_hash_read_64(input, i - 23);
+      input_aligned_capture_d = _wsp_hash_read_64(input, i - 31);
+      s->mix += input_aligned_capture_a + input_aligned_capture_b
+        + input_aligned_capture_c + input_aligned_capture_d;
+      s->a += input_aligned_capture_a + ((s->a << 30) | (s->a >> 34)) + s->mix;
+      s->b += input_aligned_capture_b + ((s->b << 29) | (s->b >> 35));
+      s->c += input_aligned_capture_c + ((s->c << 28) | (s->c >> 36));
+      s->d += input_aligned_capture_d + ((s->d << 27) | (s->d >> 37));
       i += 32;
     }
 
@@ -156,24 +159,26 @@ void wsp_hash_64_transform(unsigned long i, unsigned long input_count,
       i -= 32;
     }
 
-    s->mix_offset += _a + _b + _c + _d + s->a + s->b + s->c + s->d;
+    s->mix_offset += input_aligned_capture_a + input_aligned_capture_b
+      + input_aligned_capture_c + input_aligned_capture_d + s->a + s->b + s->c
+      + s->d;
     i++;
   }
 
   if ((input_count - i) >= 16) {
     i += 16;
-    _a = _wsp_hash_read_64(input, i - 16);
-    _b = _wsp_hash_read_64(input, i - 8);
-    s->mix += _a + _b;
-    s->a += _a + ((s->a << 30) | (s->a >> 34)) + s->mix;
-    s->b += _b + ((s->b << 28) | (s->b >> 36)) + s->mix;
+    input_aligned_capture_a = _wsp_hash_read_64(input, i - 16);
+    input_aligned_capture_b = _wsp_hash_read_64(input, i - 8);
+    s->mix += input_aligned_capture_a + input_aligned_capture_b;
+    s->a += input_aligned_capture_a + ((s->a << 30) | (s->a >> 34)) + s->mix;
+    s->b += input_aligned_capture_b + ((s->b << 28) | (s->b >> 36)) + s->mix;
   }
 
   if ((input_count - i) >= 8) {
     i += 8;
-    _a = _wsp_hash_read_64(input, i - 8);
-    s->mix += _a;
-    s->a += _a + ((s->a << 30) | (s->a >> 34)) + s->mix;
+    input_aligned_capture_a = _wsp_hash_read_64(input, i - 8);
+    s->mix += input_aligned_capture_a;
+    s->a += input_aligned_capture_a + ((s->a << 30) | (s->a >> 34)) + s->mix;
   }
 
   if (i != input_count) {
